@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Mobile sub</string>
+    <string name="subscribers">Subscribers</string>
+    <string name="sub_detail">Subscribers Details</string>
+</resources>
