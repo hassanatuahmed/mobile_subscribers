@@ -1,6 +1,7 @@
 package com.example.mobilesub.ui.theme.view
 
 import android.annotation.SuppressLint
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,17 +30,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.mobilesub.R
 
+enum class MyScreen(@StringRes val title:Int){
+    Start(title = R.string.subscribers),
+    SubscriberDetail(title = R.string.sub_detail)
 
+}
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun MainList(onClick: () -> Unit,modifier: Modifier = Modifier){
+fun MainList(modifier: Modifier = Modifier,navigateToDetailPage: (Int) -> Unit,sharedViewModel: SharedViewModel){
     val itemList = mutableListOf(
         "Happy", "Happy", "Happy", "Happy",
         "Happy", "Happy", "Happy", "Happy", "Happy"
     )
-    Scaffold(floatingActionButton = { MyFloatingActionButton (onClick=onClick) }) {
-        LazyColumn {
+    Scaffold(floatingActionButton =
+    { MyFloatingActionButton (navigateToDetailPage=navigateToDetailPage) },
+        topBar = { MyAppBar()}) {
+        LazyColumn(modifier = Modifier.padding(top =60.dp )) {
             items(itemList) { item ->
                 Card(
 

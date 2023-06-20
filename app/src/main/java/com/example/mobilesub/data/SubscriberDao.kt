@@ -15,7 +15,10 @@ interface SubscriberDao {
     suspend fun insertSubscriber(subscriber: Subscriber)
 
     @Query("SELECT * FROM subscriber_table")
-    suspend fun getAllUser(): LiveData<List<Subscriber>>
+     fun getAllUser(): LiveData<List<Subscriber>>
+
+    @Query("SELECT * FROM subscriber_table")
+    fun getAllUserFlow(): Flow<List<Subscriber>>
 
     @Query("SELECT * FROM subscriber_table WHERE id =:id")
     fun getSubscriber(id : Int): Flow<Subscriber>

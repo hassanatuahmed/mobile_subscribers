@@ -57,7 +57,8 @@ import java.util.Calendar
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SubscribersDetail() {
+fun SubscribersDetail(viewModel: SharedViewModel) {
+
 
 
     Scaffold(
@@ -65,27 +66,31 @@ fun SubscribersDetail() {
             .fillMaxWidth()
             .padding(30.dp)
     ) {
+
+
+
         Column {
             TextHeader(text = "Subscriber Name")
-            MyTextField(value = "", onValueChange = {})
+            MyTextField(value = viewModel.nameInput, onValueChange = { viewModel.nameInput = it})
             TextHeader(text = "Email")
-            MyTextField(value = "", onValueChange = {})
+            MyTextField(value = viewModel.emailInput, onValueChange = { viewModel.emailInput = it})
             TextHeader(text = "Phone Number")
-            MyTextField(value = "", onValueChange = {})
+            MyTextField(value = viewModel.phoneInput, onValueChange = { viewModel.phoneInput = it})
             TextHeader(text = "Date of Birth")
             DatePickerField( )
             TextHeader(text = "Location")
-            MyTextField(value = "", onValueChange = {})
+            MyTextField(value = viewModel.locationInput, onValueChange = { viewModel.locationInput = it})
             TextHeader(text = "Status")
             DropdownField()
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { viewModel.addUser() },
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.button_color) // Set the desired background color here
                 ),
                 modifier = Modifier
-                    .fillMaxWidth().padding(top = 30.dp)
+                    .fillMaxWidth()
+                    .padding(top = 30.dp)
 
                     .height(60.dp)
             ) {
@@ -208,7 +213,7 @@ fun DatePickerField() {
          modifier = Modifier
              .fillMaxWidth()
              .height(45.dp)
-             .onGloballyPositioned {  coordinates -> mTextFieldSize = coordinates.size.toSize()}
+             .onGloballyPositioned { coordinates -> mTextFieldSize = coordinates.size.toSize() }
              .clickable { isDatePickerVisible = true },
 
          trailingIcon = {
