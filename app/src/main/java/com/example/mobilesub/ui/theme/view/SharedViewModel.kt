@@ -41,6 +41,8 @@ class SharedViewModel @Inject constructor
     private val _data = MutableStateFlow<List<Subscriber>>(emptyList())
     val data: StateFlow<List<Subscriber>> get() = _data
 
+    private val _dataLive = MutableStateFlow<List<Subscriber>>(emptyList())
+    val dataLive: StateFlow<List<Subscriber>> get() = _dataLive
 
 
         fun getAllUserFlow(){

@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
     @NonNull
     var id: Int = 0,
     var subscriberName: String ,
-    var email: String ,
+    var email: String,
     var phoneNumber: String ,
     var dateOfBirth: String ,
     var location: String ,
