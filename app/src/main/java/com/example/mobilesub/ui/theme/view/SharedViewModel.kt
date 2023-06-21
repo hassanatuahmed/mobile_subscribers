@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.ForeignKey
 import com.example.mobilesub.data.models.Action
+import com.example.mobilesub.data.models.RequestState
 import com.example.mobilesub.data.models.Subscriber
 import com.example.mobilesub.data.repository.SubscriberRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.lang.Exception
 import java.util.concurrent.Flow
 import javax.inject.Inject
 
@@ -38,19 +40,26 @@ class SharedViewModel @Inject constructor
     var statusInput by  mutableStateOf("")
     var dobInput by   mutableStateOf("")
 
-    private val _data = MutableStateFlow<List<Subscriber>>(emptyList())
-    val data: StateFlow<List<Subscriber>> get() = _data
-
-    private val _dataLive = MutableStateFlow<List<Subscriber>>(emptyList())
-    val dataLive: StateFlow<List<Subscriber>> get() = _dataLive
+    private val _data = MutableStateFlow<RequestState<List<Subscriber>>>(RequestState.Idle)
+    val data: StateFlow<RequestState<List<Subscriber>>> get() = _data
+//
+//    private val _dataLive = MutableStateFlow<List<Subscriber>>(emptyList())
+//    val dataLive: StateFlow<List<Subscriber>> get() = _dataLive
 
 
         fun getAllUserFlow(){
-            viewModelScope.launch {
-                repository.getAllUsersFlow.collect{
-                    _data.value = it
+            _data.value = RequestState.Loading
+            try{
+                viewModelScope.launch {
+                    repository.getAllUsersFlow.collect{
+                        _data.value = RequestState.Success(it)
+                    }
                 }
+            }catch (e: Exception){
+                _data.value = RequestState.Error(e)
+
             }
+
         }
         val allUsers:LiveData<List<Subscriber>> =repository.getAllUsers
 
@@ -96,5 +105,18 @@ class SharedViewModel @Inject constructor
             statusInput = subscriber.status
             dobInput = subscriber.dateOfBirth
         }
+    }
+
+    private val _selectedUser:MutableStateFlow<Subscriber?> = MutableStateFlow(null)
+    val selectedUser:StateFlow<Subscriber?> = _selectedUser
+
+    fun getSelectSubscriber(id:Int){
+        viewModelScope.launch {
+            repository.getUser(id).collect{
+                user ->
+                _selectedUser.value = user
+            }
+        }
+
     }
 }

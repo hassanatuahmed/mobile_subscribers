@@ -53,33 +53,43 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.KeyboardType
 
 import com.example.mobilesub.R
+import com.example.mobilesub.data.models.Action
+import com.example.mobilesub.data.models.Subscriber
 import java.util.Calendar
 
+
+@Composable
+fun DetailAppBar(selectedUser:Subscriber?,navigateToListScreen:(Action) -> Unit){
+    if(selectedUser == null){
+        DetailAppBarNew(
+            NavigateToListScreen =navigateToListScreen )
+
+    }else{
+        DetailAppBarEx(
+            NavigateToListScreen = navigateToListScreen,
+            selectedUser = selectedUser)
+    }
+
+}
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SubscribersDetail(viewModel: SharedViewModel) {
+fun SubscribersDetail(viewModel: SharedViewModel,NavigateToListScreen:(Action) -> Unit) {
 
 
 
-    Scaffold(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(30.dp)
-    ) {
-
-
-
-        Column {
+        Column(Modifier.padding(top = 60.dp)) {
             TextHeader(text = "Subscriber Name")
-            MyTextField(value = viewModel.nameInput, onValueChange = { viewModel.nameInput = it})
+            MyTextField(value = viewModel.nameInput, onValueChange = { viewModel.nameInput = it })
             TextHeader(text = "Email")
-            MyTextField(value = viewModel.emailInput, onValueChange = { viewModel.emailInput = it})
+            MyTextField(value = viewModel.emailInput, onValueChange = { viewModel.emailInput = it })
             TextHeader(text = "Phone Number")
-            MyTextField(value = viewModel.phoneInput, onValueChange = { viewModel.phoneInput = it})
-            TextHeader(text = "Date of Birth")
-            DatePickerField( )
+            MyTextField(value = viewModel.phoneInput, onValueChange = { viewModel.phoneInput = it })
+            TextHeader(text = "Date of Birth",)
+            DatePickerField()
             TextHeader(text = "Location")
-            MyTextField(value = viewModel.locationInput, onValueChange = { viewModel.locationInput = it})
+            MyTextField(
+                value = viewModel.locationInput,
+                onValueChange = { viewModel.locationInput = it })
             TextHeader(text = "Status")
             DropdownField()
             Button(
@@ -100,7 +110,7 @@ fun SubscribersDetail(viewModel: SharedViewModel) {
         }
 
     }
-}
+
 
 @Composable
 fun TextHeader(text: String) {
@@ -156,25 +166,28 @@ fun DropdownField() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(45.dp)
+                .padding(top=10.dp)
                 .onGloballyPositioned { coordinates -> mTextFieldSize = coordinates.size.toSize() }
 
         )
-        DropdownMenu(expanded = mExpended,
-            onDismissRequest = { mExpended = false},
+        DropdownMenu(
+            expanded = mExpended,
+            onDismissRequest = { mExpended = false },
             modifier = Modifier
-                
-                .width(with(LocalDensity.current){mTextFieldSize.width.toDp()})
+
+                .width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
         ) {
-            items.forEach {
-                    item -> DropdownMenuItem(onClick = {
-                mExpended = false
-                mSelectedItem = item
-            }, colors = MenuDefaults.itemColors(
-                colorResource(id = R.color.text_header_color)),
-                text = { Text(text = item, color = Color.Black) })
+            items.forEach { item ->
+                DropdownMenuItem(onClick = {
+                    mExpended = false
+                    mSelectedItem = item
+                }, colors = MenuDefaults.itemColors(
+                    colorResource(id = R.color.text_header_color)
+                ),
+                    text = { Text(text = item, color = Color.Black) })
 
             }
-    }
+        }
     }
 
 
@@ -203,31 +216,32 @@ fun DatePickerField() {
         }, year, month, dayOfMonth
     )
 
- Column {
-     OutlinedTextField(
-         value = selectedDateText,
-         shape = RoundedCornerShape(10.dp),
+    Column {
+        OutlinedTextField(
+            value = selectedDateText,
+            shape = RoundedCornerShape(10.dp),
 
-         onValueChange = {selectedDateText = it},
-         readOnly = true,
-         modifier = Modifier
-             .fillMaxWidth()
-             .height(45.dp)
-             .onGloballyPositioned { coordinates -> mTextFieldSize = coordinates.size.toSize() }
-             .clickable { isDatePickerVisible = true },
+            onValueChange = { selectedDateText = it },
+            readOnly = true,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(45.dp)
+                .padding(top = 10.dp)
+                .onGloballyPositioned { coordinates -> mTextFieldSize = coordinates.size.toSize() }
+                .clickable { isDatePickerVisible = true },
 
-         trailingIcon = {
-             IconButton(onClick = {datePicker.show()}){
-                 Icon(Icons.Filled.DateRange, contentDescription = "")
+            trailingIcon = {
+                IconButton(onClick = { datePicker.show() }) {
+                    Icon(Icons.Filled.DateRange, contentDescription = "")
 
-             }
-         },
-         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
-     )
-
- }
+                }
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword)
+        )
 
     }
+
+}
 
 
 
