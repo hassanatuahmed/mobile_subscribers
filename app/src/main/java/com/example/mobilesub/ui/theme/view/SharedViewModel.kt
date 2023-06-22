@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.Size
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -39,6 +40,11 @@ class SharedViewModel @Inject constructor
     var locationInput by   mutableStateOf("")
     var statusInput by  mutableStateOf("")
     var dobInput by   mutableStateOf("")
+
+    var mExpended by   mutableStateOf(value = false)
+    var mTextFieldSize by   mutableStateOf(Size.Zero)
+
+    var isDatePickerVisible by   mutableStateOf(false)
 
     private val _data = MutableStateFlow<RequestState<List<Subscriber>>>(RequestState.Idle)
     val data: StateFlow<RequestState<List<Subscriber>>> get() = _data

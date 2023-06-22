@@ -85,13 +85,13 @@ fun SubscribersDetail(viewModel: SharedViewModel,NavigateToListScreen:(Action) -
             TextHeader(text = "Phone Number")
             MyTextField(value = viewModel.phoneInput, onValueChange = { viewModel.phoneInput = it })
             TextHeader(text = "Date of Birth",)
-            DatePickerField()
+            DatePickerField(viewModel)
             TextHeader(text = "Location")
             MyTextField(
                 value = viewModel.locationInput,
                 onValueChange = { viewModel.locationInput = it })
             TextHeader(text = "Status")
-            DropdownField()
+            DropdownField(viewModel)
             Button(
                 onClick = { viewModel.addUser() },
                 shape = RoundedCornerShape(10.dp),
@@ -133,7 +133,7 @@ fun MyTextField(modifier: Modifier = Modifier, value: String, onValueChange: (St
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 10.dp, bottom = 10.dp)
-            .height(40.dp),
+            .height(50.dp),
         onValueChange = onValueChange,
         shape = RoundedCornerShape(10.dp)
     )
@@ -141,13 +141,11 @@ fun MyTextField(modifier: Modifier = Modifier, value: String, onValueChange: (St
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownField() {
+fun DropdownField(sharedViewModel: SharedViewModel) {
     val items = listOf("Prepaid", "Postpaid")
-    var mExpended by remember { mutableStateOf(value = false) }
-    var mSelectedItem by remember { mutableStateOf("") }
-    var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
 
-    var icon = if (mExpended) {
+
+    var icon = if (sharedViewModel.mExpended) {
         Icons.Filled.KeyboardArrowUp
     } else {
         Icons.Filled.KeyboardArrowDown
@@ -155,32 +153,33 @@ fun DropdownField() {
 
 
     Column {
-        OutlinedTextField(value = mSelectedItem,
-            onValueChange = { mSelectedItem = it },
+        OutlinedTextField(value = sharedViewModel.statusInput,
+            onValueChange = { sharedViewModel.statusInput = it },
             readOnly = true,
             shape = RoundedCornerShape(10.dp),
             trailingIcon = {
-                Icon(icon, contentDescription = "", Modifier.clickable { mExpended = !mExpended })
+                Icon(icon, contentDescription = "", Modifier.clickable { sharedViewModel.mExpended = !sharedViewModel.mExpended })
 
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(45.dp)
+                .height(50.dp)
                 .padding(top=10.dp)
-                .onGloballyPositioned { coordinates -> mTextFieldSize = coordinates.size.toSize() }
+                .clickable { sharedViewModel.mExpended = true }
+                .onGloballyPositioned { coordinates -> sharedViewModel.mTextFieldSize = coordinates.size.toSize() }
 
         )
         DropdownMenu(
-            expanded = mExpended,
-            onDismissRequest = { mExpended = false },
+            expanded = sharedViewModel.mExpended,
+            onDismissRequest = { sharedViewModel.mExpended = false },
             modifier = Modifier
 
-                .width(with(LocalDensity.current) { mTextFieldSize.width.toDp() })
+                .width(with(LocalDensity.current) { sharedViewModel.mTextFieldSize.width.toDp() })
         ) {
             items.forEach { item ->
                 DropdownMenuItem(onClick = {
-                    mExpended = false
-                    mSelectedItem = item
+                    sharedViewModel.mExpended = false
+                    sharedViewModel.statusInput = item
                 }, colors = MenuDefaults.itemColors(
                     colorResource(id = R.color.text_header_color)
                 ),
@@ -190,19 +189,12 @@ fun DropdownField() {
         }
     }
 
-
 }
 
 @Composable
-fun DatePickerField() {
-    var isDatePickerVisible by remember { mutableStateOf(false) }
-    var mTextFieldSize by remember { mutableStateOf(Size.Zero) }
-
-
+fun DatePickerField(sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val calendar = Calendar.getInstance()
-
-    var selectedDateText by remember { mutableStateOf("") }
 
 // Fetching current year, month and day
     val year = calendar[Calendar.YEAR]
@@ -212,23 +204,23 @@ fun DatePickerField() {
     val datePicker = DatePickerDialog(
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            selectedDateText = "$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"
+            sharedViewModel.dobInput = "$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"
         }, year, month, dayOfMonth
     )
 
     Column {
         OutlinedTextField(
-            value = selectedDateText,
+            value =  sharedViewModel.dobInput,
             shape = RoundedCornerShape(10.dp),
 
-            onValueChange = { selectedDateText = it },
+            onValueChange = {  sharedViewModel.dobInput = it },
             readOnly = true,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(45.dp)
+                .height(50.dp)
                 .padding(top = 10.dp)
-                .onGloballyPositioned { coordinates -> mTextFieldSize = coordinates.size.toSize() }
-                .clickable { isDatePickerVisible = true },
+                .onGloballyPositioned { coordinates -> sharedViewModel.mTextFieldSize = coordinates.size.toSize() }
+                .clickable {  sharedViewModel.isDatePickerVisible = true },
 
             trailingIcon = {
                 IconButton(onClick = { datePicker.show() }) {
