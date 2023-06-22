@@ -33,7 +33,6 @@ import javax.inject.Inject
 class SharedViewModel @Inject constructor
     (private val repository: SubscriberRepository) : ViewModel() {
 
-
     var emailInput by   mutableStateOf("")
     var nameInput by   mutableStateOf("")
     var phoneInput by   mutableStateOf("")
@@ -48,9 +47,7 @@ class SharedViewModel @Inject constructor
 
     private val _data = MutableStateFlow<RequestState<List<Subscriber>>>(RequestState.Idle)
     val data: StateFlow<RequestState<List<Subscriber>>> get() = _data
-//
-//    private val _dataLive = MutableStateFlow<List<Subscriber>>(emptyList())
-//    val dataLive: StateFlow<List<Subscriber>> get() = _dataLive
+
 
 
         fun getAllUserFlow(){
@@ -63,7 +60,6 @@ class SharedViewModel @Inject constructor
                 }
             }catch (e: Exception){
                 _data.value = RequestState.Error(e)
-
             }
 
         }
@@ -102,7 +98,8 @@ class SharedViewModel @Inject constructor
 
     }
 
-    fun updateUser(subscriber: Subscriber){
+    fun updateUserField(subscriber: Subscriber){
+
         if(subscriber != null){
             emailInput = subscriber.email
             nameInput = subscriber.subscriberName
@@ -110,6 +107,13 @@ class SharedViewModel @Inject constructor
             locationInput = subscriber.location
             statusInput = subscriber.status
             dobInput = subscriber.dateOfBirth
+        }else{
+            emailInput = ""
+            nameInput = ""
+            phoneInput = ""
+            locationInput = ""
+            statusInput = ""
+            dobInput = ""
         }
     }
 

@@ -4,6 +4,7 @@ package com.example.mobilesub.ui.theme.view
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.util.Log
 import android.widget.DatePicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -18,8 +19,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.geometry.Size
 
 
 import androidx.compose.material3.ButtonDefaults
@@ -32,13 +31,10 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
 
 import androidx.compose.ui.unit.toSize
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
@@ -55,6 +51,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import com.example.mobilesub.R
 import com.example.mobilesub.data.models.Action
 import com.example.mobilesub.data.models.Subscriber
+import com.example.mobilesub.ui.theme.components.DetailAppBarEx
+import com.example.mobilesub.ui.theme.components.DetailAppBarNew
 import java.util.Calendar
 
 
@@ -74,26 +72,35 @@ fun DetailAppBar(selectedUser:Subscriber?,navigateToListScreen:(Action) -> Unit)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun SubscribersDetail(viewModel: SharedViewModel,NavigateToListScreen:(Action) -> Unit) {
+var name: String =  viewModel.nameInput
+var location: String =  viewModel.locationInput
+var dob: String =  viewModel.dobInput
+var phone: String =  viewModel.phoneInput
+var status: String =  viewModel.statusInput
+var email: String =  viewModel.emailInput
+    Log.d("NAME>>>>>>>>>>>>>>>",name)
+//var name: String =  viewModel.nameInput
 
-
+    Scaffold() {
 
         Column(Modifier.padding(top = 60.dp)) {
+
             TextHeader(text = "Subscriber Name")
-            MyTextField(value = viewModel.nameInput, onValueChange = { viewModel.nameInput = it })
+            MyTextField(value = name, onValueChange = { viewModel.nameInput = it })
             TextHeader(text = "Email")
-            MyTextField(value = viewModel.emailInput, onValueChange = { viewModel.emailInput = it })
+            MyTextField(value = email, onValueChange = { viewModel.emailInput = it })
             TextHeader(text = "Phone Number")
-            MyTextField(value = viewModel.phoneInput, onValueChange = { viewModel.phoneInput = it })
+            MyTextField(value = phone, onValueChange = { viewModel.phoneInput = it })
             TextHeader(text = "Date of Birth",)
             DatePickerField(viewModel)
             TextHeader(text = "Location")
             MyTextField(
-                value = viewModel.locationInput,
+                value = location,
                 onValueChange = { viewModel.locationInput = it })
             TextHeader(text = "Status")
             DropdownField(viewModel)
             Button(
-                onClick = { viewModel.addUser() },
+                onClick = { saveData(viewModel) },
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(id = R.color.button_color) // Set the desired background color here
@@ -110,6 +117,12 @@ fun SubscribersDetail(viewModel: SharedViewModel,NavigateToListScreen:(Action) -
         }
 
     }
+
+    }
+
+fun saveData(viewModel:SharedViewModel){
+    viewModel.addUser()
+}
 
 
 @Composable
@@ -164,9 +177,11 @@ fun DropdownField(sharedViewModel: SharedViewModel) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
-                .padding(top=10.dp)
+                .padding(top = 10.dp)
                 .clickable { sharedViewModel.mExpended = true }
-                .onGloballyPositioned { coordinates -> sharedViewModel.mTextFieldSize = coordinates.size.toSize() }
+                .onGloballyPositioned { coordinates ->
+                    sharedViewModel.mTextFieldSize = coordinates.size.toSize()
+                }
 
         )
         DropdownMenu(
@@ -219,8 +234,10 @@ fun DatePickerField(sharedViewModel: SharedViewModel) {
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(top = 10.dp)
-                .onGloballyPositioned { coordinates -> sharedViewModel.mTextFieldSize = coordinates.size.toSize() }
-                .clickable {  sharedViewModel.isDatePickerVisible = true },
+                .onGloballyPositioned { coordinates ->
+                    sharedViewModel.mTextFieldSize = coordinates.size.toSize()
+                }
+                .clickable { sharedViewModel.isDatePickerVisible = true },
 
             trailingIcon = {
                 IconButton(onClick = { datePicker.show() }) {

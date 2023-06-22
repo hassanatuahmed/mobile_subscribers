@@ -2,7 +2,6 @@ package com.example.mobilesub.ui.theme.view
 
 import android.annotation.SuppressLint
 import android.util.Log
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,13 +18,10 @@ import androidx.compose.ui.unit.dp
 import com.example.mobilesub.R
 import com.example.mobilesub.data.models.RequestState
 import com.example.mobilesub.data.models.Subscriber
+import com.example.mobilesub.ui.theme.components.ListItem
+import com.example.mobilesub.ui.theme.components.MyAppBar
+import com.example.mobilesub.ui.theme.components.MyFloatingActionButton
 
-
-//enum class MyScreen(@StringRes val title: Int) {
-//    Start(title = R.string.subscribers),
-//    SubscriberDetail(title = R.string.sub_detail)
-//
-//}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -68,11 +64,12 @@ fun ListContent(subscriberList: RequestState<List<Subscriber>>, navigateToDetail
 fun DisplaySubscriber(subscriberList: List<Subscriber>, navigateToDetailPage: (userId: Int) -> Unit){
     LazyColumn(modifier = Modifier.padding(top = 60.dp)) {
         items(
+
             items = subscriberList,
             key = { user ->
                 user.id }
         ) {myList ->
-            ListItem(subscriber = myList, navigateToDetailPage =navigateToDetailPage )
+            ListItem(subscriber = myList, navigateToDetailPage =navigateToDetailPage, modifier = Modifier )
 
 
         }

@@ -1,14 +1,11 @@
-package com.example.mobilesub.ui.theme.view
+package com.example.mobilesub.ui.theme.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
+
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,27 +45,7 @@ import com.example.mobilesub.data.models.Action
 import com.example.mobilesub.data.models.Subscriber
 import kotlin.random.Random
 
-@Composable
-fun MyFloatingActionButton(navigateToDetailPage: (userId: Int) -> Unit) {
 
-
-    FloatingActionButton(
-        onClick = { navigateToDetailPage(-1) },
-//        onClick = {navigateToDetailPage},
-        shape = CircleShape,
-
-//        containerColor = FloatingActionButtonDefaults.containerColor,
-
-        modifier = Modifier,
-        contentColor = Color.White
-    ) {
-        Icon(
-            Icons.Filled.Add,
-            ""
-        )
-
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -96,7 +73,7 @@ fun DetailAppBarNew(
 ) {
     TopAppBar(
 
-        actions = { AddAction(onAddClicked = NavigateToListScreen) },
+//        actions = { AddAction(onAddClicked = NavigateToListScreen) },
         title = { Text("Add Subscriber", color = Color.White) },
 
         navigationIcon = { BackAction(onBackClicked = NavigateToListScreen) },
@@ -123,7 +100,7 @@ fun DetailAppBarEx(
         },
         title = { Text(selectedUser.subscriberName, overflow = TextOverflow.Ellipsis, color = Color.White) },
 
-        navigationIcon = { BackAction(onBackClicked =NavigateToListScreen )},
+        navigationIcon = { BackAction(onBackClicked =NavigateToListScreen ) },
 
         colors = TopAppBarDefaults.smallTopAppBarColors(
             containerColor = colorResource(R.color.button_color)
@@ -212,65 +189,6 @@ fun SearchComposable(
 
     }
 
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ListItem(subscriber: Subscriber, navigateToDetailPage: (userId: Int) -> Unit) {
-    Surface(shadowElevation = 2.dp, onClick = { navigateToDetailPage(subscriber.id) }) {
-        Card(
-
-            modifier = Modifier
-                .fillMaxWidth()
-
-                .padding(20.dp, 10.dp, 20.dp, 10.dp),
-
-            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(30.dp),
-
-                ) {
-                MyCircle()
-                Row() {
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = subscriber.subscriberName)
-                        Spacer(modifier = Modifier.weight(1f))
-                        Text(text = "")
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Text(text = subscriber.phoneNumber)
-                    }
-                    Spacer(
-                        Modifier
-                            .weight(4f)
-                            .fillMaxHeight()
-                            .background(Color.Green)
-                    )
-
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier = Modifier.align(Alignment.Bottom)
-//                        modifier = Modifier.modifier.align(Alignment.Bottom)
-                    ) {
-                        Text(text = subscriber.status)
-
-
-                    }
-                }
-            }
-        }
-
-    }
 }
 
 
