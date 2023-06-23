@@ -4,8 +4,10 @@ package com.example.mobilesub.ui.theme.view
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.Context
 import android.util.Log
 import android.widget.DatePicker
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -71,13 +73,15 @@ fun DetailAppBar(selectedUser:Subscriber?,navigateToListScreen:(Action) -> Unit)
 }
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SubscribersDetail(viewModel: SharedViewModel,NavigateToListScreen:(Action) -> Unit) {
+fun SubscribersDetail(viewModel: SharedViewModel,navigateToListScreen:(Action) -> Unit) {
 var name: String =  viewModel.nameInput
 var location: String =  viewModel.locationInput
 var dob: String =  viewModel.dobInput
 var phone: String =  viewModel.phoneInput
 var status: String =  viewModel.statusInput
 var email: String =  viewModel.emailInput
+
+    val context = LocalContext.current
     Log.d("NAME>>>>>>>>>>>>>>>",name)
 //var name: String =  viewModel.nameInput
 
@@ -96,32 +100,60 @@ var email: String =  viewModel.emailInput
             TextHeader(text = "Location")
             MyTextField(
                 value = location,
-                onValueChange = { viewModel.locationInput = it })
+                onValueChange = {
+
+                    viewModel.locationInput = it
+                })
             TextHeader(text = "Status")
             DropdownField(viewModel)
-            Button(
-                onClick = { saveData(viewModel) },
-                shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = colorResource(id = R.color.button_color) // Set the desired background color here
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 30.dp)
+            MyButton(navigateToListScreen = { action ->
+                if(action ==Action.NO_ACTION){
+                    navigateToListScreen(action)
 
-                    .height(60.dp)
-            ) {
-                Text(text = "Save")
+                }else{
+                  if(viewModel.validateFields()){
+                      navigateToListScreen(action)
 
-            }
+                  }else{
+                      displayToast(context)
+                  }
+                }
+            })
+       
         }
 
     }
 
     }
 
+fun displayToast(context: Context) {
+    Toast.makeText(context,"Fields Empty",Toast.LENGTH_SHORT).show()
+
+}
+
 fun saveData(viewModel:SharedViewModel){
     viewModel.addUser()
+}
+
+@Composable
+fun MyButton(navigateToListScreen:(Action) -> Unit){
+    Button(
+        onClick = {navigateToListScreen},
+
+        shape = RoundedCornerShape(10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = colorResource(id = R.color.button_color) // Set the desired background color here
+        ),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 30.dp)
+
+            .height(60.dp)
+    ) {
+        Text(text = "Save")
+
+    }
+    
 }
 
 

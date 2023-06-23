@@ -4,17 +4,22 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.mobilesub.constants
+import com.example.mobilesub.Constants
+import com.example.mobilesub.Constants.LIST_ARG_KEY
+import com.example.mobilesub.Constants.LIST_SCREEN
+import com.example.mobilesub.data.models.toAction
 import com.example.mobilesub.ui.theme.view.MainList
 import com.example.mobilesub.ui.theme.view.SharedViewModel
 
 fun NavGraphBuilder.listComposeScreen(navigateToDetailPage: (userId:Int) -> Unit,sharedViewModel: SharedViewModel) {
     composable(
-        route = constants.LIST_SCREEN,
-        arguments = listOf(navArgument(constants.LIST_ARG_KEY) {
+        route = LIST_SCREEN,
+        arguments = listOf(navArgument(LIST_ARG_KEY) {
             type = NavType.StringType
         })
-    ) {
+    ) {navBackStackEntry ->
+        val action =navBackStackEntry.arguments?.getString(LIST_ARG_KEY).toAction()
+
 
         MainList(navigateToDetailPage=navigateToDetailPage, sharedViewModel = sharedViewModel)
 

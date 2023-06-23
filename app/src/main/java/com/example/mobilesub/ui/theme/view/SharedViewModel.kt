@@ -76,7 +76,7 @@ class SharedViewModel @Inject constructor
                 subscriberName = nameInput
 
 
-            )
+              )
             repository.addUser(subscriber = user)
         }
 
@@ -115,6 +115,12 @@ class SharedViewModel @Inject constructor
             statusInput = ""
             dobInput = ""
         }
+    }
+
+    fun validateFields():Boolean{
+        return emailInput.isNotEmpty() && nameInput.isNotEmpty() && phoneInput.isNotEmpty() && locationInput.isNotEmpty() &&
+                statusInput.isNotEmpty() && dobInput.isNotEmpty()
+
     }
 
     private val _selectedUser:MutableStateFlow<Subscriber?> = MutableStateFlow(null)

@@ -3,13 +3,14 @@ package com.example.mobilesub.data.models
 import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(tableName = "subscriber_table")
  data class Subscriber (
 
     @PrimaryKey(autoGenerate = true)
     @NonNull
-    var id: Int = 0,
+    var id: Int=0,
     var subscriberName: String ,
     var email: String,
     var phoneNumber: String ,

@@ -30,7 +30,7 @@ fun DetailScreen(
         ) {
 
        Box(Modifier.padding(20.dp)){
-           SubscribersDetail(viewModel = sharedViewModel, NavigateToListScreen = navigateToListScreen)
+           SubscribersDetail(viewModel = sharedViewModel, navigateToListScreen = navigateToListScreen)
        }
     }
 

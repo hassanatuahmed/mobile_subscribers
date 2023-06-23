@@ -1,7 +1,7 @@
 package com.example.mobilesub.data.models
 
-import com.example.mobilesub.constants.LIST_SCREEN
-import com.example.mobilesub.constants.SUBSCRIBER_SCREEN
+import com.example.mobilesub.Constants.LIST_SCREEN
+import com.example.mobilesub.Constants.SUBSCRIBER_SCREEN
 
 sealed class MyScreen(val route : String) {
     object MainScreen : MyScreen(LIST_SCREEN)
