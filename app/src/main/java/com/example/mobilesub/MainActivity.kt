@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobilesub.ui.theme.MobileSubTheme
+import com.example.mobilesub.ui.theme.view.LoginPage
 import com.example.mobilesub.ui.theme.view.SharedViewModel
 import com.example.mobilesub.ui.theme.view.nav.SetupNavigation
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +37,8 @@ class MainActivity : ComponentActivity() {
                 ) {
 
                     navController = rememberNavController()
-                    SetupNavigation(navController = navController,sharedViewModel=sharedViewModel)
+//                    SetupNavigation(navController = navController,sharedViewModel=sharedViewModel)
+                    LoginPage()
 
                 }
             }
