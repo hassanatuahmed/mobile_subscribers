@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "691691627268",
+    "project_id": "mobile-sub-dccf5",
+    "storage_bucket": "mobile-sub-dccf5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:691691627268:android:de1e985f957629a0542651",
+        "android_client_info": {
+          "package_name": "com.example.mobilesub"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "691691627268-g1bti5uumpsg37vfb1mpupb34pt1g0ss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-8Y4JVvRpIcLT_Q1YXWv9qV5bZamHMn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691691627268-g1bti5uumpsg37vfb1mpupb34pt1g0ss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

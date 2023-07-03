@@ -15,17 +15,18 @@ fun MyFloatingActionButton(navigateToDetailPage: (userId: Int) -> Unit) {
 
     FloatingActionButton(
         onClick = { navigateToDetailPage(-1) },
-//        onClick = {navigateToDetailPage},
         shape = CircleShape,
+        containerColor = Color.Blue.copy(alpha = 0.9f),
 
-//        containerColor = FloatingActionButtonDefaults.containerColor,
 
         modifier = Modifier,
+
         contentColor = Color.White
     ) {
         Icon(
             Icons.Filled.Add,
-            ""
+
+            contentDescription = ""
         )
 
     }

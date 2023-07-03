@@ -32,14 +32,17 @@ fun MainList(
 ) {
 
     LaunchedEffect(key1 = true) {
-        Log.d("listscreen", "launch effect triggered")
         sharedViewModel.getAllUserFlow()
     }
+
+    val action by sharedViewModel.action
     val allUserState by sharedViewModel.data.collectAsState()
     val allSubscriber by sharedViewModel.allUsers.observeAsState(RequestState.Loading)
+    sharedViewModel.handleDatabaseActions(action)
 
-    Scaffold(floatingActionButton =
-    { MyFloatingActionButton(navigateToDetailPage = navigateToDetailPage) },
+    Scaffold(floatingActionButton = {
+        MyFloatingActionButton(navigateToDetailPage = navigateToDetailPage) },
+
         topBar = { MyAppBar(stringResource(id = R.string.subscribers)) }) {
         ListContent(subscriberList = allUserState,navigateToDetailPage)
 
@@ -69,7 +72,9 @@ fun DisplaySubscriber(subscriberList: List<Subscriber>, navigateToDetailPage: (u
             key = { user ->
                 user.id }
         ) {myList ->
-            ListItem(subscriber = myList, navigateToDetailPage =navigateToDetailPage, modifier = Modifier )
+            ListItem(subscriber = myList,
+                navigateToDetailPage =navigateToDetailPage,
+                modifier = Modifier )
 
 
         }

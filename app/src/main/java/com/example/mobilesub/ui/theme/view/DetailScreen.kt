@@ -8,6 +8,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.mobilesub.data.models.Action
 import com.example.mobilesub.data.models.Subscriber
 
@@ -17,6 +18,7 @@ import com.example.mobilesub.data.models.Subscriber
 fun DetailScreen(
     navigateToListScreen: (Action) -> Unit,
     selectedUser: Subscriber?,
+    navController: NavController,
     sharedViewModel: SharedViewModel
 ) {
     Scaffold(
@@ -30,7 +32,7 @@ fun DetailScreen(
         ) {
 
        Box(Modifier.padding(20.dp)){
-           SubscribersDetail(viewModel = sharedViewModel, navigateToListScreen = navigateToListScreen)
+           SubscribersDetail(viewModel = sharedViewModel, navigateToListScreen = navigateToListScreen, navController = navController)
        }
     }
 

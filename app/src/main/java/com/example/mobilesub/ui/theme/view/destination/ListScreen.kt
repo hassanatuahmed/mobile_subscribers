@@ -1,5 +1,6 @@
 package com.example.mobilesub.ui.theme.view.destination
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
@@ -19,9 +20,16 @@ fun NavGraphBuilder.listComposeScreen(navigateToDetailPage: (userId:Int) -> Unit
         })
     ) {navBackStackEntry ->
         val action =navBackStackEntry.arguments?.getString(LIST_ARG_KEY).toAction()
+        
+        LaunchedEffect(key1 = action ){
+            sharedViewModel.action.value = action
+
+        }
 
 
-        MainList(navigateToDetailPage=navigateToDetailPage, sharedViewModel = sharedViewModel)
+        MainList(
+             navigateToDetailPage=navigateToDetailPage,
+            sharedViewModel = sharedViewModel)
 
     }
 

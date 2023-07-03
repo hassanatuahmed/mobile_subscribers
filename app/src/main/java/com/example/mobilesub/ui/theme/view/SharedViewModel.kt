@@ -1,37 +1,39 @@
 package com.example.mobilesub.ui.theme.view
 
-import android.app.Notification
+import android.content.Context
+import android.widget.Toast
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
 import androidx.compose.ui.geometry.Size
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.ForeignKey
 import com.example.mobilesub.data.models.Action
 import com.example.mobilesub.data.models.RequestState
 import com.example.mobilesub.data.models.Subscriber
 import com.example.mobilesub.data.repository.SubscriberRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.lang.Exception
-import java.util.concurrent.Flow
 import javax.inject.Inject
 
 @HiltViewModel
 //@ActivityRetainedScoped
-class SharedViewModel @Inject constructor
+class  SharedViewModel @Inject constructor
     (private val repository: SubscriberRepository) : ViewModel() {
+
+
+
+    val snackbarHostState =  { SnackbarHostState() }
+
 
     var emailInput by   mutableStateOf("")
     var nameInput by   mutableStateOf("")
@@ -47,6 +49,8 @@ class SharedViewModel @Inject constructor
 
     private val _data = MutableStateFlow<RequestState<List<Subscriber>>>(RequestState.Idle)
     val data: StateFlow<RequestState<List<Subscriber>>> get() = _data
+
+    val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
 
 
@@ -75,7 +79,6 @@ class SharedViewModel @Inject constructor
                 dateOfBirth = dobInput,
                 subscriberName = nameInput
 
-
               )
             repository.addUser(subscriber = user)
         }
@@ -100,6 +103,7 @@ class SharedViewModel @Inject constructor
 
     fun updateUserField(subscriber: Subscriber){
 
+
         if(subscriber != null){
             emailInput = subscriber.email
             nameInput = subscriber.subscriberName
@@ -108,18 +112,24 @@ class SharedViewModel @Inject constructor
             statusInput = subscriber.status
             dobInput = subscriber.dateOfBirth
         }else{
-            emailInput = ""
-            nameInput = ""
-            phoneInput = ""
-            locationInput = ""
-            statusInput = ""
+
+            emailInput = "Enter Email"
+            nameInput = "Enter Name"
+            phoneInput = "Enter Phone"
+            locationInput = "Enter Location"
+            statusInput = "Enter Status"
             dobInput = ""
+
         }
     }
 
     fun validateFields():Boolean{
-        return emailInput.isNotEmpty() && nameInput.isNotEmpty() && phoneInput.isNotEmpty() && locationInput.isNotEmpty() &&
+       return emailInput.isNotEmpty() && nameInput.isNotEmpty() &&
+                phoneInput.isNotEmpty() && locationInput.isNotEmpty() &&
                 statusInput.isNotEmpty() && dobInput.isNotEmpty()
+
+
+
 
     }
 
@@ -127,12 +137,28 @@ class SharedViewModel @Inject constructor
     val selectedUser:StateFlow<Subscriber?> = _selectedUser
 
     fun getSelectSubscriber(id:Int){
-        viewModelScope.launch {
-            repository.getUser(id).collect{
-                user ->
-                _selectedUser.value = user
+
+            viewModelScope.launch {
+                repository.getUser(id).collect{
+                        user ->
+                    _selectedUser.value = user
+                }
             }
-        }
+
+
 
     }
+
+    @Composable
+    fun ShowSnackbar(
+        snackbarHostState: SnackbarHostState,
+        message: String,
+        duration: SnackbarDuration = SnackbarDuration.Short
+    ) {
+        LaunchedEffect(snackbarHostState) {
+            snackbarHostState.showSnackbar(message, duration = duration)
+        }
+    }
+
+
 }

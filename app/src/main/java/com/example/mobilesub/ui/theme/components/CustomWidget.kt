@@ -1,14 +1,12 @@
 package com.example.mobilesub.ui.theme.components
 
+import android.graphics.Paint
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -17,16 +15,12 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,11 +29,15 @@ import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.mobilesub.R
 import com.example.mobilesub.data.models.Action
 import com.example.mobilesub.data.models.Subscriber
@@ -84,6 +82,8 @@ fun DetailAppBarNew(
     )
 }
 
+
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailAppBarEx(
@@ -96,9 +96,9 @@ fun DetailAppBarEx(
 
         actions = {
             CloseAction(NavigateToListScreen)
-            UpdateAction(onUpdateClicked = NavigateToListScreen)
+//            UpdateAction(onUpdateClicked = NavigateToListScreen)
         },
-        title = { Text(selectedUser.subscriberName, overflow = TextOverflow.Ellipsis, color = Color.White) },
+        title = { Text("Subscriber Detail", overflow = TextOverflow.Ellipsis, color = Color.White) },
 
         navigationIcon = { BackAction(onBackClicked =NavigateToListScreen ) },
 
@@ -200,40 +200,30 @@ fun generateRandomColor(): Color {
     return Color(red, green, blue)
 }
 
-@Composable
-fun MyCircle() {
-    val randomColor = generateRandomColor()
-    Image(
-        painter = painterResource(R.drawable.ic_launcher_background),
-        contentDescription = null,
 
+
+
+@Composable
+
+fun Circle(initial: String) {
+    val randomColor = generateRandomColor()
+
+    Box(
         modifier = Modifier
+            .size(70.dp)
             .clip(CircleShape)
-            .background(randomColor)
-            .height(60.dp),
-    )
-
-}
-
-@Composable
-fun Cc() {
-    val randomColor = generateRandomColor()
-
-    Box(modifier = Modifier.fillMaxWidth()) {
-        Text(text = "H")
-        Canvas(
-            modifier = Modifier
-                .width(60.dp)
-                .height(60.dp)
-        ) {
-            drawCircle(color = randomColor)
-
-        }
-
-
+            .background(randomColor),
+        contentAlignment = Alignment.Center
+    ){
+        Text(
+            text = initial,
+            style = TextStyle(
+                fontSize = 24.sp,
+                color = Color.White
+            )
+        )
     }
 }
-
 
 
 

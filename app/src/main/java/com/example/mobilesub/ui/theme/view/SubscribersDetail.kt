@@ -4,10 +4,7 @@ package com.example.mobilesub.ui.theme.view
 
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
-import android.content.Context
-import android.util.Log
 import android.widget.DatePicker
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -32,9 +29,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 
 import androidx.compose.ui.unit.toSize
+
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -49,6 +48,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.navigation.NavController
 
 import com.example.mobilesub.R
 import com.example.mobilesub.data.models.Action
@@ -59,35 +59,45 @@ import java.util.Calendar
 
 
 @Composable
-fun DetailAppBar(selectedUser:Subscriber?,navigateToListScreen:(Action) -> Unit){
-    if(selectedUser == null){
+fun DetailAppBar(selectedUser: Subscriber?, navigateToListScreen: (Action) -> Unit) {
+    if (selectedUser == null) {
         DetailAppBarNew(
-            NavigateToListScreen =navigateToListScreen )
+            NavigateToListScreen = navigateToListScreen
+        )
 
-    }else{
+    } else {
         DetailAppBarEx(
             NavigateToListScreen = navigateToListScreen,
-            selectedUser = selectedUser)
+            selectedUser = selectedUser
+        )
     }
 
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun SubscribersDetail(viewModel: SharedViewModel,navigateToListScreen:(Action) -> Unit) {
-var name: String =  viewModel.nameInput
-var location: String =  viewModel.locationInput
-var dob: String =  viewModel.dobInput
-var phone: String =  viewModel.phoneInput
-var status: String =  viewModel.statusInput
-var email: String =  viewModel.emailInput
+fun SubscribersDetail(
+    viewModel: SharedViewModel,
+    navigateToListScreen: (Action) -> Unit,
+    navController: NavController
+) {
+    val snackBarHostState = remember { SnackbarHostState() }
+
 
     val context = LocalContext.current
-    Log.d("NAME>>>>>>>>>>>>>>>",name)
-//var name: String =  viewModel.nameInput
 
-    Scaffold() {
+    Scaffold(
+        snackbarHost = { snackBarHostState }
+    ) {
 
         Column(Modifier.padding(top = 60.dp)) {
+            var name: String = viewModel.nameInput
+            var location: String = viewModel.locationInput
+            var dob: String = viewModel.dobInput
+            var phone: String = viewModel.phoneInput
+            var status: String = viewModel.statusInput
+            var email: String = viewModel.emailInput
 
             TextHeader(text = "Subscriber Name")
             MyTextField(value = name, onValueChange = { viewModel.nameInput = it })
@@ -95,7 +105,7 @@ var email: String =  viewModel.emailInput
             MyTextField(value = email, onValueChange = { viewModel.emailInput = it })
             TextHeader(text = "Phone Number")
             MyTextField(value = phone, onValueChange = { viewModel.phoneInput = it })
-            TextHeader(text = "Date of Birth",)
+            TextHeader(text = "Date of Birth")
             DatePickerField(viewModel)
             TextHeader(text = "Location")
             MyTextField(
@@ -106,39 +116,55 @@ var email: String =  viewModel.emailInput
                 })
             TextHeader(text = "Status")
             DropdownField(viewModel)
-            MyButton(navigateToListScreen = { action ->
-                if(action ==Action.NO_ACTION){
-                    navigateToListScreen(action)
+//            MyButton(navigateToListScreen = { action ->
+//
+//                if (action == Action.NO_ACTION) {
+//                    navigateToListScreen(action)
+//
+//                } else {
+//                    if (viewModel.validateFields()) {
+//                        navigateToListScreen(action)
+//                        saveData(viewModel)
+//
+//                    } else {
+//                        displayToast(context)
+//                    }
+//                }
+//            })
 
-                }else{
-                  if(viewModel.validateFields()){
-                      navigateToListScreen(action)
+            MyButton(onClick = {
+                saveData(viewModel = viewModel, navController =navController)
 
-                  }else{
-                      displayToast(context)
-                  }
-                }
             })
-       
+
+
         }
 
     }
 
+}
+
+
+
+
+fun saveData(
+    viewModel: SharedViewModel,
+    navController: NavController,
+) {
+    if (viewModel.validateFields()) {
+        viewModel.addUser()
+        navController.navigateUp()
+
+
+    } else {
     }
-
-fun displayToast(context: Context) {
-    Toast.makeText(context,"Fields Empty",Toast.LENGTH_SHORT).show()
-
 }
 
-fun saveData(viewModel:SharedViewModel){
-    viewModel.addUser()
-}
 
 @Composable
-fun MyButton(navigateToListScreen:(Action) -> Unit){
+fun MyButton(onClick: () -> Unit) {
     Button(
-        onClick = {navigateToListScreen},
+        onClick = { onClick },
 
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
@@ -153,7 +179,7 @@ fun MyButton(navigateToListScreen:(Action) -> Unit){
         Text(text = "Save")
 
     }
-    
+
 }
 
 
@@ -171,14 +197,14 @@ fun TextHeader(text: String) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTextField(modifier: Modifier = Modifier, value: String, onValueChange: (String) -> Unit) {
+fun MyTextField(value: String, onValueChange: (String) -> Unit) {
     OutlinedTextField(
         value = value,
 
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 10.dp, bottom = 10.dp)
-            .height(50.dp),
+            .height(60.dp),
         onValueChange = onValueChange,
         shape = RoundedCornerShape(10.dp)
     )
@@ -203,12 +229,15 @@ fun DropdownField(sharedViewModel: SharedViewModel) {
             readOnly = true,
             shape = RoundedCornerShape(10.dp),
             trailingIcon = {
-                Icon(icon, contentDescription = "", Modifier.clickable { sharedViewModel.mExpended = !sharedViewModel.mExpended })
+                Icon(
+                    icon,
+                    contentDescription = "",
+                    Modifier.clickable { sharedViewModel.mExpended = !sharedViewModel.mExpended })
 
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(60.dp)
                 .padding(top = 10.dp)
                 .clickable { sharedViewModel.mExpended = true }
                 .onGloballyPositioned { coordinates ->
@@ -257,14 +286,14 @@ fun DatePickerField(sharedViewModel: SharedViewModel) {
 
     Column {
         OutlinedTextField(
-            value =  sharedViewModel.dobInput,
+            value = sharedViewModel.dobInput,
             shape = RoundedCornerShape(10.dp),
 
-            onValueChange = {  sharedViewModel.dobInput = it },
+            onValueChange = { sharedViewModel.dobInput = it },
             readOnly = true,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(60.dp)
                 .padding(top = 10.dp)
                 .onGloballyPositioned { coordinates ->
                     sharedViewModel.mTextFieldSize = coordinates.size.toSize()

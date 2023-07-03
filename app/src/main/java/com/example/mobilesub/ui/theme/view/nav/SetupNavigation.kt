@@ -16,7 +16,7 @@ fun SetupNavigation(navController: NavHostController,sharedViewModel: SharedView
     }
 
     NavHost(navController, LIST_SCREEN) {
-        detailComposeScreen(sharedViewModel,screen.list)
+        detailComposeScreen(sharedViewModel,screen.list,navController)
 
         listComposeScreen (screen.details,sharedViewModel)
 
