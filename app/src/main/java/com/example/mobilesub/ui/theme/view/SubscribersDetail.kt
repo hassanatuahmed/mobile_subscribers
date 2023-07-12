@@ -135,7 +135,7 @@ fun SubscribersDetail(
             MyButton(onClick = {
                 saveData(viewModel = viewModel, navController =navController)
 
-            })
+            }, text = "Save")
 
 
         }
@@ -143,8 +143,6 @@ fun SubscribersDetail(
     }
 
 }
-
-
 
 
 fun saveData(
@@ -162,9 +160,9 @@ fun saveData(
 
 
 @Composable
-fun MyButton(onClick: () -> Unit) {
+fun MyButton(onClick: () -> Unit,text:String) {
     Button(
-        onClick = { onClick },
+        onClick = onClick ,
 
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(
@@ -176,7 +174,7 @@ fun MyButton(onClick: () -> Unit) {
 
             .height(60.dp)
     ) {
-        Text(text = "Save")
+        Text(text = text)
 
     }
 

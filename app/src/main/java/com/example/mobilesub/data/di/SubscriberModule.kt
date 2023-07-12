@@ -4,6 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.mobilesub.data.SubscribersDatabase
+import com.example.mobilesub.data.repository.AuthRepository
+import com.example.mobilesub.data.repository.SubscriberRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,8 +22,7 @@ class SubscriberModule {
 
     @Singleton
     @Provides
-    fun provideDatabase(
-        @ApplicationContext context : Context
+    fun provideDatabase(@ApplicationContext context : Context
     ): SubscribersDatabase {
 
         return Room.databaseBuilder(context,SubscribersDatabase::class.java,
@@ -28,4 +32,16 @@ class SubscriberModule {
     @Singleton
     @Provides
     fun provideSubscriberDao(database: SubscribersDatabase) = database.subscriberDao()
+
+    @Provides
+    @Singleton
+    fun providesFirebaseAuth() : FirebaseAuth{
+        return FirebaseAuth.getInstance()
+    }
+
+
+
+
+
+
 }

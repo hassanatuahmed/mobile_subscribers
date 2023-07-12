@@ -1,7 +1,5 @@
 package com.example.mobilesub.ui.theme.view
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.getValue
@@ -15,12 +13,19 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobilesub.data.models.Action
 import com.example.mobilesub.data.models.RequestState
+import com.example.mobilesub.data.models.Resource
 import com.example.mobilesub.data.models.Subscriber
 import com.example.mobilesub.data.repository.SubscriberRepository
+import com.example.mobilesub.ui.theme.signin.login.GoogleSignState
+import com.example.mobilesub.ui.theme.signin.login.SignInState
+import com.example.mobilesub.ui.theme.signin.signup.SignUpState
+import com.google.firebase.auth.AuthCredential
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
@@ -31,9 +36,16 @@ class  SharedViewModel @Inject constructor
     (private val repository: SubscriberRepository) : ViewModel() {
 
 
+//    val snackbarHostState =  { SnackbarHostState() }
 
-    val snackbarHostState =  { SnackbarHostState() }
+    private val _signInState = Channel<SignInState>()
+    val signInState = _signInState.receiveAsFlow()
 
+    private val _googleState = mutableStateOf(GoogleSignState())
+    val googleState: State<GoogleSignState> = _googleState
+
+    private val _signUpState = Channel<SignUpState>()
+    val signUpState = _signUpState.receiveAsFlow()
 
     var emailInput by   mutableStateOf("")
     var nameInput by   mutableStateOf("")
@@ -149,14 +161,64 @@ class  SharedViewModel @Inject constructor
 
     }
 
-    @Composable
-    fun ShowSnackbar(
-        snackbarHostState: SnackbarHostState,
-        message: String,
-        duration: SnackbarDuration = SnackbarDuration.Short
-    ) {
-        LaunchedEffect(snackbarHostState) {
-            snackbarHostState.showSnackbar(message, duration = duration)
+    fun loginUser(email:String,password:String) = viewModelScope.launch {
+        repository.loginUser(email, password).collect{
+                result ->
+            when(result){
+                is Resource.Success ->{
+                    _signInState.send(SignInState(isSuccess = "Sign In Success"))
+
+                }
+
+                is Resource.Loading ->{
+                    _signInState.send(SignInState(isLoading = true))
+
+                }
+                is Resource.Error ->{
+                    _signInState.send(SignInState(isError = result.message.toString()))
+
+                }
+            }
+        }
+    }
+
+    fun googleSignIn(credential: AuthCredential) = viewModelScope.launch {
+        repository.googleSignIn(credential).collect{result ->
+            when(result){
+                is Resource.Success ->{
+                    _googleState.value = GoogleSignState(isSuccess  =result.data)
+                }
+
+                is Resource.Loading ->{
+                    _googleState.value = GoogleSignState(isLoading = false)
+                }
+
+                is Resource.Error ->{
+                    _googleState.value = GoogleSignState(isError = result.message!!)
+                }
+            }
+
+        }
+    }
+
+    fun registerUser(email:String,password:String) = viewModelScope.launch {
+        repository.registerUser(email, password).collect{
+                result ->
+            when(result){
+                is Resource.Success ->{
+                    _signUpState.send(SignUpState(isSuccess = "Sign Up Success"))
+
+                }
+
+                is Resource.Loading ->{
+                    _signUpState.send(SignUpState(isLoading = true))
+
+                }
+                is Resource.Error ->{
+                    _signUpState.send(SignUpState(isError = result.message))
+
+                }
+            }
         }
     }
 

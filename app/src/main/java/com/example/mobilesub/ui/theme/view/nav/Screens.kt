@@ -16,6 +16,18 @@ class Screens(navController: NavHostController) {
         navController.navigate("details/$id")
     }
 
+    val loginPage:() -> Unit ={
+        navController.navigate("sign_in")
+    }
+
+    val SignUpPage:() -> Unit ={
+        navController.navigate("sign_up")
+    }
+
+
+
+
+
 
 }
 

@@ -14,7 +14,9 @@ import com.example.mobilesub.data.models.Action
 import com.example.mobilesub.ui.theme.view.DetailScreen
 import com.example.mobilesub.ui.theme.view.SharedViewModel
 
-fun NavGraphBuilder.detailComposeScreen(sharedViewModel: SharedViewModel,navigateToListScreen:(Action) -> Unit,navController: NavController) {
+fun NavGraphBuilder.detailComposeScreen(sharedViewModel: SharedViewModel,
+                                        navigateToListScreen:(Action) -> Unit,
+                                        navController: NavController) {
     composable(
         route = SUBSCRIBER_SCREEN,
 
