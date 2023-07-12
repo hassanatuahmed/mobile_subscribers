@@ -3,6 +3,7 @@ package com.example.mobilesub.data.repository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.mobilesub.data.SubscriberDao
+import com.example.mobilesub.data.models.PostModel
 import com.example.mobilesub.data.models.Resource
 import com.example.mobilesub.data.models.Subscriber
 import com.example.mobilesub.data.service.ApiService
@@ -32,6 +33,11 @@ class SubscriberRepository @Inject constructor(
     val getAllUsers: LiveData<List<Subscriber>> = subscriberDao.getAllUser()
 
     val getAllUsersFlow: Flow<List<Subscriber>> = subscriberDao.getAllUserFlow()
+
+
+    suspend fun getPost() : List<PostModel>{
+        return apiService.getPost()
+    }
 
 
 

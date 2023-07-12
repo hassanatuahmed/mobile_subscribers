@@ -12,6 +12,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mobilesub.data.models.Action
+import com.example.mobilesub.data.models.PostModel
 import com.example.mobilesub.data.models.RequestState
 import com.example.mobilesub.data.models.Resource
 import com.example.mobilesub.data.models.Subscriber
@@ -25,10 +26,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import java.lang.Exception
+import androidx.compose.runtime.*
+import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.flow.asFlow
 import javax.inject.Inject
+import kotlin.Exception
 
 @HiltViewModel
 //@ActivityRetainedScoped
@@ -47,6 +53,16 @@ class  SharedViewModel @Inject constructor
     private val _signUpState = Channel<SignUpState>()
     val signUpState = _signUpState.receiveAsFlow()
 
+    var errorMessage by mutableStateOf("")
+
+    val _myPost = MutableLiveData<List<PostModel>>()
+    val myPost:LiveData<List<PostModel>> =_myPost
+
+
+
+//     var posts by   mutableStateOf(emptyList<PostModel>())
+
+
     var emailInput by   mutableStateOf("")
     var nameInput by   mutableStateOf("")
     var phoneInput by   mutableStateOf("")
@@ -63,6 +79,18 @@ class  SharedViewModel @Inject constructor
     val data: StateFlow<RequestState<List<Subscriber>>> get() = _data
 
     val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
+
+    fun getPosts(){
+        viewModelScope.launch {
+           try {
+                val posts=repository.getPost()
+               _myPost.value = posts
+           }catch (e: Exception){
+               errorMessage = e.message.toString()
+
+           }
+        }
+    }
 
 
 
@@ -224,3 +252,4 @@ class  SharedViewModel @Inject constructor
 
 
 }
+
