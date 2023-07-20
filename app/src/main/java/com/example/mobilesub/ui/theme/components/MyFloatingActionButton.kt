@@ -8,13 +8,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import java.util.UUID
 
 @Composable
-fun MyFloatingActionButton(navigateToDetailPage: (userId: Int) -> Unit) {
+fun MyFloatingActionButton(navigateToDetailPage: (userId: UUID) -> Unit) {
 
 
     FloatingActionButton(
-        onClick = { navigateToDetailPage(-1) },
+        onClick = { navigateToDetailPage(UUID.fromString("11a7a490-261a-11ee-be56-0242ac120002")) },
+//        onClick = { navigateToDetailPage(-1) },
         shape = CircleShape,
         containerColor = Color.Blue.copy(alpha = 0.9f),
 

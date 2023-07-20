@@ -1,7 +1,6 @@
 package com.example.mobilesub.ui.theme.view
 
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHostState
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -26,23 +25,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.getValue
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import androidx.compose.runtime.*
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.flow.asFlow
+import java.util.UUID
 import javax.inject.Inject
 import kotlin.Exception
 
 @HiltViewModel
 //@ActivityRetainedScoped
-class  SharedViewModel @Inject constructor
+class SharedViewModel @Inject constructor
     (private val repository: SubscriberRepository) : ViewModel() {
 
-
-//    val snackbarHostState =  { SnackbarHostState() }
 
     private val _signInState = Channel<SignInState>()
     val signInState = _signInState.receiveAsFlow()
@@ -56,60 +50,62 @@ class  SharedViewModel @Inject constructor
     var errorMessage by mutableStateOf("")
 
     val _myPost = MutableLiveData<List<PostModel>>()
-    val myPost:LiveData<List<PostModel>> =_myPost
+    val myPost: LiveData<List<PostModel>> = _myPost
 
+    val getData = mutableStateOf<List<PostModel>>(emptyList())
 
 
 //     var posts by   mutableStateOf(emptyList<PostModel>())
 
 
-    var emailInput by   mutableStateOf("")
-    var nameInput by   mutableStateOf("")
-    var phoneInput by   mutableStateOf("")
-    var locationInput by   mutableStateOf("")
-    var statusInput by  mutableStateOf("")
-    var dobInput by   mutableStateOf("")
+    var emailInput by mutableStateOf("")
+    var nameInput by mutableStateOf("")
+    var phoneInput by mutableStateOf("")
+    var locationInput by mutableStateOf("")
+    var statusInput by mutableStateOf("")
+    var dobInput by mutableStateOf("")
+    var id by mutableStateOf("")
 
-    var mExpended by   mutableStateOf(value = false)
-    var mTextFieldSize by   mutableStateOf(Size.Zero)
+    var mExpended by mutableStateOf(value = false)
+    var mTextFieldSize by mutableStateOf(Size.Zero)
 
-    var isDatePickerVisible by   mutableStateOf(false)
+    var isDatePickerVisible by mutableStateOf(false)
 
     private val _data = MutableStateFlow<RequestState<List<Subscriber>>>(RequestState.Idle)
     val data: StateFlow<RequestState<List<Subscriber>>> get() = _data
 
     val action: MutableState<Action> = mutableStateOf(Action.NO_ACTION)
 
-    fun getPosts(){
+    fun getPosts() {
         viewModelScope.launch {
-           try {
-                val posts=repository.getPost()
-               _myPost.value = posts
-           }catch (e: Exception){
-               errorMessage = e.message.toString()
+            try {
+                val posts = repository.getPost()
+                _myPost.value = posts
+            } catch (e: Exception) {
+                errorMessage = e.message.toString()
 
-           }
+            }
         }
     }
 
 
-
-        fun getAllUserFlow(){
-            _data.value = RequestState.Loading
-            try{
-                viewModelScope.launch {
-                    repository.getAllUsersFlow.collect{
-                        _data.value = RequestState.Success(it)
-                    }
+    fun getAllUserFlow() {
+        _data.value = RequestState.Loading
+        try {
+            viewModelScope.launch {
+                repository.getAllUsersFlow.collect {
+                    _data.value = RequestState.Success(it)
                 }
-            }catch (e: Exception){
-                _data.value = RequestState.Error(e)
             }
-
+        } catch (e: Exception) {
+            _data.value = RequestState.Error(e)
         }
-        val allUsers:LiveData<List<Subscriber>> =repository.getAllUsers
 
-    fun addUser(){
+    }
+
+    val allUsers: LiveData<List<Subscriber>> = repository.getAllUsers
+
+    fun addUser() {
         viewModelScope.launch(Dispatchers.IO) {
             val user = Subscriber(
                 email = emailInput,
@@ -117,20 +113,76 @@ class  SharedViewModel @Inject constructor
                 status = statusInput,
                 location = locationInput,
                 dateOfBirth = dobInput,
-                subscriberName = nameInput
+                subscriberName = nameInput,
+                id = UUID.fromString(id)
 
-              )
+
+            )
+
+
             repository.addUser(subscriber = user)
         }
 
     }
 
-    fun handleDatabaseActions(action: Action){
-        when(action){
-            Action.ADD ->{
+    fun addUserToWeb() {
+
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val postUser = PostModel(
+                email = emailInput,
+                contact = phoneInput,
+                status = statusInput,
+                location = locationInput,
+                doB = dobInput,
+                name = nameInput,
+                id = id
+
+            )
+            repository.addUserToWeb(subscriber = postUser)
+        }
+
+    }
+
+    fun addUserFromWeb() {
+        /*
+
+        GET DATA FROM WEB AND SAVE TO DB
+         */
+        viewModelScope.launch(Dispatchers.IO) {
+
+            try {
+                val subscribers = repository.fetchSubscribersFromWeb()
+                subscribers.map { subscriber ->
+
+                    val user = Subscriber(
+                        email = subscriber.email,
+                        phoneNumber = subscriber.contact,
+                        status = subscriber.status,
+                        location = subscriber.location,
+                        dateOfBirth = subscriber.doB,
+                        subscriberName = subscriber.name,
+                        id = UUID.fromString(subscriber.id)
+
+                    )
+                    repository.addUser(subscriber = user)
+
+                }
+
+            } catch (e: Exception) {
+                Log.d("Error", e.toString())
+            }
+
+        }
+    }
+
+    fun handleDatabaseActions(action: Action) {
+        when (action) {
+            Action.ADD -> {
                 addUser()
             }
-            Action.UPDATE ->{
+
+            Action.UPDATE -> {
 
             }
 
@@ -141,17 +193,47 @@ class  SharedViewModel @Inject constructor
 
     }
 
-    fun updateUserField(subscriber: Subscriber){
+    fun updateUserOnWeb() {
+
+            viewModelScope.launch {
+                val subscriber = PostModel(
+                    email = emailInput,
+                    contact = phoneInput,
+                    status = statusInput,
+                    location = locationInput,
+                    doB = dobInput,
+                    name = nameInput,
+                    id = id
+
+                )
+                repository.updateUserOnWeb(subscriber)
 
 
-        if(subscriber != null){
+        }
+    }
+
+    fun updateUserField(subscriber: Subscriber) {
+
+
+        if (subscriber != null) {
             emailInput = subscriber.email
             nameInput = subscriber.subscriberName
-            phoneInput = subscriber.phoneNumber
+            phoneInput = subscriber.phoneNumber.toString()
             locationInput = subscriber.location
             statusInput = subscriber.status
             dobInput = subscriber.dateOfBirth
-        }else{
+        } else {
+
+            emailInput = "Enter Email"
+            nameInput = "Enter Name"
+            phoneInput = "Enter Phone"
+            locationInput = "Enter Location"
+            statusInput = "Enter Status"
+            dobInput = ""
+
+        }
+
+        if (subscriber.id == UUID.fromString("11a7a490-261a-11ee-be56-0242ac120002")) {
 
             emailInput = "Enter Email"
             nameInput = "Enter Name"
@@ -163,46 +245,42 @@ class  SharedViewModel @Inject constructor
         }
     }
 
-    fun validateFields():Boolean{
-       return emailInput.isNotEmpty() && nameInput.isNotEmpty() &&
+    fun validateFields(): Boolean {
+        return emailInput.isNotEmpty() && nameInput.isNotEmpty() &&
                 phoneInput.isNotEmpty() && locationInput.isNotEmpty() &&
                 statusInput.isNotEmpty() && dobInput.isNotEmpty()
 
 
-
-
     }
 
-    private val _selectedUser:MutableStateFlow<Subscriber?> = MutableStateFlow(null)
-    val selectedUser:StateFlow<Subscriber?> = _selectedUser
+    private val _selectedUser: MutableStateFlow<Subscriber?> = MutableStateFlow(null)
+    val selectedUser: StateFlow<Subscriber?> = _selectedUser
 
-    fun getSelectSubscriber(id:Int){
+    fun getSelectSubscriber(id: UUID) {
 
-            viewModelScope.launch {
-                repository.getUser(id).collect{
-                        user ->
-                    _selectedUser.value = user
-                }
+        viewModelScope.launch {
+            repository.getUser(id).collect { user ->
+                _selectedUser.value = user
             }
-
+        }
 
 
     }
 
-    fun loginUser(email:String,password:String) = viewModelScope.launch {
-        repository.loginUser(email, password).collect{
-                result ->
-            when(result){
-                is Resource.Success ->{
+    fun loginUser(email: String, password: String) = viewModelScope.launch {
+        repository.loginUser(email, password).collect { result ->
+            when (result) {
+                is Resource.Success -> {
                     _signInState.send(SignInState(isSuccess = "Sign In Success"))
 
                 }
 
-                is Resource.Loading ->{
+                is Resource.Loading -> {
                     _signInState.send(SignInState(isLoading = true))
 
                 }
-                is Resource.Error ->{
+
+                is Resource.Error -> {
                     _signInState.send(SignInState(isError = result.message.toString()))
 
                 }
@@ -211,17 +289,17 @@ class  SharedViewModel @Inject constructor
     }
 
     fun googleSignIn(credential: AuthCredential) = viewModelScope.launch {
-        repository.googleSignIn(credential).collect{result ->
-            when(result){
-                is Resource.Success ->{
-                    _googleState.value = GoogleSignState(isSuccess  =result.data)
+        repository.googleSignIn(credential).collect { result ->
+            when (result) {
+                is Resource.Success -> {
+                    _googleState.value = GoogleSignState(isSuccess = result.data)
                 }
 
-                is Resource.Loading ->{
+                is Resource.Loading -> {
                     _googleState.value = GoogleSignState(isLoading = false)
                 }
 
-                is Resource.Error ->{
+                is Resource.Error -> {
                     _googleState.value = GoogleSignState(isError = result.message!!)
                 }
             }
@@ -229,20 +307,20 @@ class  SharedViewModel @Inject constructor
         }
     }
 
-    fun registerUser(email:String,password:String) = viewModelScope.launch {
-        repository.registerUser(email, password).collect{
-                result ->
-            when(result){
-                is Resource.Success ->{
+    fun registerUser(email: String, password: String) = viewModelScope.launch {
+        repository.registerUser(email, password).collect { result ->
+            when (result) {
+                is Resource.Success -> {
                     _signUpState.send(SignUpState(isSuccess = "Sign Up Success"))
 
                 }
 
-                is Resource.Loading ->{
+                is Resource.Loading -> {
                     _signUpState.send(SignUpState(isLoading = true))
 
                 }
-                is Resource.Error ->{
+
+                is Resource.Error -> {
                     _signUpState.send(SignUpState(isError = result.message))
 
                 }

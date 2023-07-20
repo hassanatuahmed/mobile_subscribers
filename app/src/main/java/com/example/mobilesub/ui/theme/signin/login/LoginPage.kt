@@ -71,7 +71,6 @@ fun LoginPage(
 
     LaunchedEffect(Unit) {
         sharedViewModel.getPosts()
-
     }
 
 
@@ -167,8 +166,8 @@ fun LoginPage(
 
                     }else{
                         myLivePost.forEach {post ->
-                            Log.d("My post>>>>>>>",post.title)
-                            Text(text = "${post.title}")
+                            Log.d("My post>>>>>>>",post.email)
+                            Text(text = "${post.email}")
                             Log.d("My post>>>>>>>","Testing")
                         }
                     }

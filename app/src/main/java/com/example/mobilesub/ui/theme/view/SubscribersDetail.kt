@@ -7,6 +7,7 @@ import android.app.DatePickerDialog
 import android.widget.DatePicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,19 +44,24 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import androidx.navigation.NavController
 
 import com.example.mobilesub.R
 import com.example.mobilesub.data.models.Action
+import com.example.mobilesub.data.models.PostModel
 import com.example.mobilesub.data.models.Subscriber
 import com.example.mobilesub.ui.theme.components.DetailAppBarEx
 import com.example.mobilesub.ui.theme.components.DetailAppBarNew
 import java.util.Calendar
+import java.util.UUID
 
 
 @Composable
@@ -82,10 +88,15 @@ fun SubscribersDetail(
     navigateToListScreen: (Action) -> Unit,
     navController: NavController
 ) {
+    val myLivePost by viewModel.myPost.observeAsState(emptyList())
+
     val snackBarHostState = remember { SnackbarHostState() }
 
 
-    val context = LocalContext.current
+
+//    val context = LocalContext.current
+
+
 
     Scaffold(
         snackbarHost = { snackBarHostState }
@@ -98,6 +109,7 @@ fun SubscribersDetail(
             var phone: String = viewModel.phoneInput
             var status: String = viewModel.statusInput
             var email: String = viewModel.emailInput
+
 
             TextHeader(text = "Subscriber Name")
             MyTextField(value = name, onValueChange = { viewModel.nameInput = it })
@@ -116,26 +128,23 @@ fun SubscribersDetail(
                 })
             TextHeader(text = "Status")
             DropdownField(viewModel)
-//            MyButton(navigateToListScreen = { action ->
-//
-//                if (action == Action.NO_ACTION) {
-//                    navigateToListScreen(action)
-//
-//                } else {
-//                    if (viewModel.validateFields()) {
-//                        navigateToListScreen(action)
-//                        saveData(viewModel)
-//
-//                    } else {
-//                        displayToast(context)
-//                    }
-//                }
-//            })
+
 
             MyButton(onClick = {
                 saveData(viewModel = viewModel, navController =navController)
 
             }, text = "Save")
+
+            if(viewModel.validateFields()){
+                Spacer(modifier = Modifier.height(30.dp))
+                MyButton(onClick = {
+                    updateData(viewModel = viewModel, navController =navController)
+
+                }, text = "Update")
+
+            }
+
+
 
 
         }
@@ -144,21 +153,26 @@ fun SubscribersDetail(
 
 }
 
-
 fun saveData(
     viewModel: SharedViewModel,
     navController: NavController,
 ) {
     if (viewModel.validateFields()) {
-        viewModel.addUser()
+//        viewModel.addUser()
+        viewModel.addUserToWeb()
         navController.navigateUp()
-
-
-    } else {
     }
 }
 
-
+fun updateData(
+    viewModel: SharedViewModel,
+    navController: NavController,
+) {
+    if (viewModel.validateFields()) {
+        viewModel.updateUserOnWeb()
+        navController.navigateUp()
+    }
+}
 @Composable
 fun MyButton(onClick: () -> Unit,text:String) {
     Button(
@@ -177,9 +191,7 @@ fun MyButton(onClick: () -> Unit,text:String) {
         Text(text = text)
 
     }
-
 }
-
 
 @Composable
 fun TextHeader(text: String) {
@@ -191,7 +203,6 @@ fun TextHeader(text: String) {
         fontFamily = FontFamily.Serif
     )
 }
-
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -213,13 +224,11 @@ fun MyTextField(value: String, onValueChange: (String) -> Unit) {
 fun DropdownField(sharedViewModel: SharedViewModel) {
     val items = listOf("Prepaid", "Postpaid")
 
-
     var icon = if (sharedViewModel.mExpended) {
         Icons.Filled.KeyboardArrowUp
     } else {
         Icons.Filled.KeyboardArrowDown
     }
-
 
     Column {
         OutlinedTextField(value = sharedViewModel.statusInput,
@@ -231,7 +240,6 @@ fun DropdownField(sharedViewModel: SharedViewModel) {
                     icon,
                     contentDescription = "",
                     Modifier.clickable { sharedViewModel.mExpended = !sharedViewModel.mExpended })
-
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -241,7 +249,6 @@ fun DropdownField(sharedViewModel: SharedViewModel) {
                 .onGloballyPositioned { coordinates ->
                     sharedViewModel.mTextFieldSize = coordinates.size.toSize()
                 }
-
         )
         DropdownMenu(
             expanded = sharedViewModel.mExpended,
@@ -258,7 +265,6 @@ fun DropdownField(sharedViewModel: SharedViewModel) {
                     colorResource(id = R.color.text_header_color)
                 ),
                     text = { Text(text = item, color = Color.Black) })
-
             }
         }
     }
@@ -278,7 +284,7 @@ fun DatePickerField(sharedViewModel: SharedViewModel) {
     val datePicker = DatePickerDialog(
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDayOfMonth: Int ->
-            sharedViewModel.dobInput = "$selectedDayOfMonth/${selectedMonth + 1}/$selectedYear"
+            sharedViewModel.dobInput = "$selectedYear-${selectedMonth + 1}-$selectedDayOfMonth"
         }, year, month, dayOfMonth
     )
 

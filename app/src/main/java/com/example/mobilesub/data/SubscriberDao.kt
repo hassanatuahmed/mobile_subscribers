@@ -7,6 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.mobilesub.data.models.Subscriber
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 @Dao
 interface SubscriberDao {
@@ -21,10 +22,10 @@ interface SubscriberDao {
     fun getAllUserFlow(): Flow<List<Subscriber>>
 
     @Query("SELECT * FROM subscriber_table WHERE id =:id")
-    fun getSubscriber(id : Int): Flow<Subscriber>
+    fun getSubscriber(id : UUID): Flow<Subscriber>
 
     @Query("DELETE FROM subscriber_table WHERE id = :id")
-    fun deleteUser(id: Int)
+    fun deleteUser(id: UUID)
 
 //    @Query("SELECT * FROM subscriber_table WHERE subscriberName LIKE : searchQuery OR loc")
 //     fun searchDatabase(searchQuery: String):Flow<List<Subscriber>>

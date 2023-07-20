@@ -8,9 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -26,12 +23,13 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.example.mobilesub.R
 import com.example.mobilesub.data.models.Subscriber
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListItem(subscriber: Subscriber, navigateToDetailPage: (userId: Int) -> Unit, modifier: Modifier) {
+fun ListItem(subscriber: Subscriber, navigateToDetailPage: (userId: UUID) -> Unit, modifier: Modifier) {
 
-    var myColor = if (subscriber.status=="Postpaid") {
+    var myColor = if (subscriber.status =="Postpaid") {
         ButtonDefaults.buttonColors(
             containerColor = colorResource(id = R.color.postpaid) // Set the desired background color here
         )
@@ -41,7 +39,7 @@ fun ListItem(subscriber: Subscriber, navigateToDetailPage: (userId: Int) -> Unit
         )
     }
 
-    var textColor = if (subscriber.status=="Postpaid") {
+    var textColor = if (subscriber.status =="Postpaid") {
        colorResource(id = R.color.postpaid_text)
     } else {
         colorResource(id = R.color.prepaid_text)

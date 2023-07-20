@@ -21,19 +21,27 @@ import com.example.mobilesub.data.models.Subscriber
 import com.example.mobilesub.ui.theme.components.ListItem
 import com.example.mobilesub.ui.theme.components.MyAppBar
 import com.example.mobilesub.ui.theme.components.MyFloatingActionButton
+import java.util.UUID
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainList(
-    modifier: Modifier = Modifier,
-    navigateToDetailPage: (userId: Int) -> Unit, sharedViewModel: SharedViewModel
+    navigateToDetailPage: (userId: UUID) -> Unit, sharedViewModel: SharedViewModel
 ) {
 
     LaunchedEffect(key1 = true) {
         sharedViewModel.getAllUserFlow()
     }
+
+
+//    LaunchedEffect(Unit) {
+//        sharedViewModel.getPosts()
+//
+//    }
+
+    sharedViewModel.addUserFromWeb()
 
     val action by sharedViewModel.action
     val allUserState by sharedViewModel.data.collectAsState()
@@ -52,7 +60,7 @@ fun MainList(
 }
 
 @Composable
-fun ListContent(subscriberList: RequestState<List<Subscriber>>, navigateToDetailPage: (userId: Int) -> Unit) {
+fun ListContent(subscriberList: RequestState<List<Subscriber>>, navigateToDetailPage: (userId: UUID) -> Unit) {
     if(subscriberList is RequestState.Success){
         if(subscriberList.data.isEmpty()){
             EmptyContent()
@@ -64,7 +72,7 @@ fun ListContent(subscriberList: RequestState<List<Subscriber>>, navigateToDetail
 }
 
 @Composable
-fun DisplaySubscriber(subscriberList: List<Subscriber>, navigateToDetailPage: (userId: Int) -> Unit){
+fun DisplaySubscriber(subscriberList: List<Subscriber>, navigateToDetailPage: (userId: UUID) -> Unit){
     LazyColumn(modifier = Modifier.padding(top = 60.dp)) {
         items(
 

@@ -30,6 +30,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MobileSubTheme {
 
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.primary

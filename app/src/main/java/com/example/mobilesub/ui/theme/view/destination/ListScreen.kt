@@ -11,8 +11,9 @@ import com.example.mobilesub.Constants.LIST_SCREEN
 import com.example.mobilesub.data.models.toAction
 import com.example.mobilesub.ui.theme.view.MainList
 import com.example.mobilesub.ui.theme.view.SharedViewModel
+import java.util.UUID
 
-fun NavGraphBuilder.listComposeScreen(navigateToDetailPage: (userId:Int) -> Unit,sharedViewModel: SharedViewModel) {
+fun NavGraphBuilder.listComposeScreen(navigateToDetailPage: (userId:UUID) -> Unit,sharedViewModel: SharedViewModel) {
     composable(
         route = LIST_SCREEN,
         arguments = listOf(navArgument(LIST_ARG_KEY) {
@@ -25,6 +26,8 @@ fun NavGraphBuilder.listComposeScreen(navigateToDetailPage: (userId:Int) -> Unit
             sharedViewModel.action.value = action
 
         }
+
+
 
 
         MainList(
